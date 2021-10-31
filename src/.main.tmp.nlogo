@@ -23,7 +23,7 @@ globals [blue-nest  yellow-nest]  ; declaração de 2 variáveis globais
 
 ;;Passo 2
 to setup
-  clear-all
+  clearall
   reset-ticks
   setup-patches
   setup-turtles
