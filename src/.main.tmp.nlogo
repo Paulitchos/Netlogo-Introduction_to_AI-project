@@ -9,8 +9,8 @@
 ;;food_energy_amount
 ;;starting_toxic_waste
 ;;starting_normal_waste
-;;starting_food
-;;n_deposits
+;;
+;;
 
 ;;Passo 2
 breed[formigas formiga] ; cria agentes formiga (tens que defenir
