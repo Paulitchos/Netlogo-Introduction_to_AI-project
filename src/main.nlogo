@@ -20,7 +20,7 @@ turtles-own [energia] ; todos os agentes caracois têm energia
 formigas-own [nErva] ; ; as formigas podem carregar comida
 
 ;;Passo 3
-globals [blue-nest  yellow-nest nformigas ncaracois reproduce capmax birthenergy reproductionFormigas reproductionCaracois show-energy?]  ; declaração de 2 variáveis globais
+globals [blue-nest  yellow-nest]  ; declaração de 2 variáveis globais
 
 ;;Passo 2
 to setup
@@ -65,13 +65,13 @@ end
 
 ;;Passo 2
 to setup-turtles
-  create-formigas nformigas [
+  create-formigas num_gluttons [
     set shape "bug"
     set color blue
     set nErva 0
     ; colocação junta-se aos caracóis (abaixo)
   ]
-  create-caracois ncaracois [ ; Criar
+  create-caracois num_cleaners [ ; Criar
     set shape "target"
     set color yellow
   ]
@@ -90,7 +90,7 @@ to go
   move-formigas
   move-caracois
   ; check-death ; Ver se morreram
-  if reproduce [ ; botão on-off
+  if true [ ; botão on-off
     reproduction ; ver se reproduz
   ]
   regrow-food ; Fazer crescer erva
@@ -131,7 +131,7 @@ to move-formigas
           ; Movimento quando a comida está à frente
           ifelse [pcolor] of patch-ahead 1 = green[
             fd 1
-            if nErva < capMax [
+            if nErva < max_waste  [
               set energia energia + 50 ; come erva, ganha energia
               set nErva nErva + 1
               ; carrega erva
@@ -169,8 +169,8 @@ end
 
 to reproduction
   ask formigas [
-    if energia > birthEnergy [ ; Se atinge limiar de energia, reproduz c/ prob
-      if random 101 < reproductionFormigas [ ; Ver probabilidade
+    if energia > food_energy_amount [;birthEnergy [ ; Se atinge limiar de energia, reproduz c/ prob
+      if random 101 < starting_toxic_waste[;reproductionFormigas [ ; Ver probabilidade
         set energia round(energia / 2) ; Divide energia / 2 e arredonda
         hatch 1 [jump 5]
         ; Reproduz-se, filho aparece à frente
@@ -179,8 +179,8 @@ to reproduction
   ]
   ask caracois
   [
-    if energia > birthEnergy [
-      if random 101 < reproductionCaracois [
+    if energia > food_energy_amount[;birthEnergy [
+      if random 101 < starting_toxic_waste[;reproductionCaracois [
         set energia round(energia / 2)
         hatch 1 [move-to patch-left-and-ahead 90 1] ; filho à esquerda
       ]
@@ -191,7 +191,7 @@ end
 to display-labels ; Colocar agentes a mostrar energia
   ask turtles [
     set label ""
-    if show-energy? [
+    if true [
       ; Se botão está on, mostra labels
       set label energia
     ]
@@ -275,10 +275,10 @@ ask formigas[
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-356
-64
-859
-568
+578
+10
+1081
+514
 -1
 -1
 15.0
@@ -401,7 +401,7 @@ INPUTBOX
 93
 114
 num_gluttons
-0.0
+5.0
 1
 0
 Number
@@ -412,7 +412,7 @@ INPUTBOX
 192
 114
 num_cleaners
-0.0
+5.0
 1
 0
 Number
@@ -423,7 +423,7 @@ INPUTBOX
 295
 115
 starting_energy
-0.0
+5.0
 1
 0
 Number
@@ -434,7 +434,7 @@ INPUTBOX
 94
 183
 max_waste
-0.0
+5.0
 1
 0
 Number
@@ -445,7 +445,7 @@ INPUTBOX
 191
 184
 tick
-0.0
+5.0
 1
 0
 Number
@@ -456,7 +456,7 @@ INPUTBOX
 295
 184
 num_killers
-0.0
+5.0
 1
 0
 Number
@@ -508,6 +508,25 @@ starting_normal_waste
 1
 NIL
 HORIZONTAL
+
+PLOT
+6
+487
+553
+817
+Agents
+Interactions
+Number of Agents
+0.0
+10.0
+0.0
+10.0
+true
+true
+"" ""
+PENS
+"num_gluttons" 1.0 0 -13840069 true "" "plot count turtles"
+"num_cleaners" 1.0 0 -14454117 true "" "plot count turtles"
 
 @#$#@#$#@
 ## WHAT IS IT?
