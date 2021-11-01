@@ -77,27 +77,135 @@ Functions:
 
 
   ask gluttons [
-    ifelse [pcolor] of patch-ahead 1 != red or [pcolor] of patch-ahead 1 != yellow [
-      ; no waste ahead 
-      set energy energy - 1 ; gasta uma unidade de energia
-      forward 1
-    ] [
-      ; waste ahead
-      ; ifelse random 2 [ ; returns 0 or 1
-        ; checks left first
+    
+    ; check energy lost through percieved waste
+    if [pcolor] of patch-ahead 1 = red [; check if any color red
+      set energy round(energy * 0.9)         ; 10% loss of energy   
+    ]
+    if [pcolor] of patch-at 0 1 = red [
+      set energy round(energy * 0.9)       
+    ]
+    if [pcolor] of patch-at 0 -1 = red [
+      set energy round(energy * 0.9)
+    ]
+    
+    if [pcolor] of patch-ahead 1 = yellow [; check if any color yellow
+      set energy round(energy * 0.95)           ; 5% loss of energy   
+    ]
+    if [pcolor] of patch-at 0 1 = yellow [
+      set energy round(energy * 0.95)       
+    ]
+    if [pcolor] of patch-at 0 -1 = yellow [
+      set energy round(energy * 0.95)
+    ]
+    
+    
+    ifelse [pcolor] of patch-ahead 1 != green and [pcolor] of patch-at 0 1 != green and [pcolor] of patch-at 0 -1 != green [
+      ;no greens
+
+      ifelse [pcolor] of patch-ahead 1 != red and [pcolor] of patch-ahead 1 != yellow [
+        ; no waste ahead 
+        set energy energy - 1 ; gasta uma unidade de energia
+        forward 1
+      ] [
+        ; waste ahead
         ; patch-at 0 1 -> right
         ; patch-at 0 -1 -> left
-      ifelse [pcolor] of patch-at 0 1 != red or [pcolor] of patch-at 0 1 != yellow [
-        move-forward
+        ifelse random 2 = 0 [ ; look right or left first
+          ifelse [pcolor] of patch-at 0 1 != red and [pcolor] of patch-at 0 1 != yellow [ ; look right
+            ; no waste right
+            set energy energy - 1
+            right 90
+          ] [
+            ; waste right
+            ; wether or not there is waste to the left we turn to the left
+            set energy energy - 1
+            left 90
+          ]
+        ] [ 
+          ifelse [pcolor] of patch-at 0 -1 != red and [pcolor] of patch-at 0 -1 != yellow [ ; look left
+            ; no waste right
+            set energy energy - 1
+            left 90
+          ] [
+            ; waste right
+            ; wether or not there is waste to the left we turn to the left
+            set energy energy - 1
+            right 90
+          ]
+        ]
       ]
 
-      ; ] [
-        ; checks right first
-        ifelse [pcolor] of patch-at 0 -1 != red or [pcolor] of patch-at 0 -1 != yellow
-      ; ]
+    ] [
+      ;at least one green
+      if [pcolor] of patch-ahead 1 = green [
+        set energy energy - 1 ; gasta uma unidade de energia
+        forward 1
+      ]
+      if [pcolor] of patch-at 0 1 = green [
+        set energy energy - 1 ; gasta uma unidade de energia
+        right 90
+      ]
+      if [pcolor] of patch-at 0 -1 = green [
+        set energy energy - 1 ; gasta uma unidade de energia
+        left 90
+      ]      
     ]
+    
+    
+    
+    if pcolor = green [
+      set energy energy + food_energy_amount
+      set pcolor black
+    ]
+  ]
+    
 
-to move-forward
-  set energy energy - 1 ; gasta uma unidade de energia
-  forward 1
-end
+
+
+
+ifelse [pcolor] of patch-at 0 1 != red and [pcolor] of patch-at 0 1 != yellow [
+
+
+
+    
+;    ifelse [pcolor] of patch-ahead 1 != red and [pcolor] of patch-ahead 1 != yellow [
+;      ; no waste ahead 
+;      set energy energy - 1 ; gasta uma unidade de energia
+;      forward 1
+;    ] [
+;      ; waste ahead
+;      ; patch-at 0 1 -> right
+;      ; patch-at 0 -1 -> left
+;      ifelse random 2 = 0 [ ; look right or left first
+;        ifelse [pcolor] of patch-at 0 1 != red and [pcolor] of patch-at 0 1 != yellow [ ; look right
+;          ; no waste right
+;          set energy energy - 1
+;          right 90
+;        ] [
+;          ; waste right
+;          ; wether or not there is waste to the left we turn to the left
+;          set energy energy - 1
+;          left 90
+;        ]
+;      ] [ 
+;        ifelse [pcolor] of patch-at 0 -1 != red and [pcolor] of patch-at 0 -1 != yellow [ ; look left
+;          ; no waste right
+;          set energy energy - 1
+;          left 90
+;        ] [
+;          ; waste right
+;          ; wether or not there is waste to the left we turn to the left
+;          set energy energy - 1
+;          right 90
+;        ]
+;      ]
+;    ]
+
+
+
+    if pcolor = green [
+      set energy energy + food_energy_amount
+      set pcolor black
+    ]
+  ]
