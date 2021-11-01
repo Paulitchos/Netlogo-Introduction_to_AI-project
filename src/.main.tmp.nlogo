@@ -94,60 +94,90 @@ to go
   tick
 end
 
-to move-gluttons
-  ask gluttons [
-    ifelse any? cleaners-on patch-ahead 1 and waste >= 10 [ ; cleaner à frente
-                                                            ; Transferir a energy do cleaner para a glutton, quando esta come o cleaner
-      let energycleaner 0 ; variável local, só para guardar energy do cleaner
-      ask one-of cleaners-on patch-ahead 1 [
-        set energycleaner energy ; Copiar energy do cleaner para energycleaner
-        die
-      ]
-      set energy energy + energycleaner ; Somar energy do cleaner à glutton
-                                           ; Reiniciar o número de pedaços de comida que a glutton transporta
-      set waste 0
-    ] [ ; Se não há cleaner, ver se há armadilha à frente
-      ifelse [pcolor] of patch-ahead 1 = red [
-        rt 90
-        set energy energy - 1
-      ][ ; Movimento quando o ninho está à frente
-         ; Movimento quando o ninho está à frente
-        ifelse [pcolor] of patch-ahead 1 = blue [
-          fd 1
-          ; Descarrega a comida transportada
-          set blue-nest blue-nest + waste
-          ; inicializa a quantidade de comida que transporta
-          set waste 0
-          set energy energy - 1
-        ] [
-          ; Movimento quando a comida está à frente
-          ifelse [pcolor] of patch-ahead 1 = green[
-            fd 1
-            if waste < max_waste  [
-              set energy energy + 50 ; come erva, ganha energy
-              set waste waste + 1
-              ; carrega erva
-              set pcolor black
-              ; patch fica sem erva
-            ]
-          ][ ; Movimento normal
-             ; Movimento normal
-            ifelse random 101 < 90 [ ; anda em frente 90 % das vezes
-              fd 1
-            ] [
-              ; caso contrário, 5 % das vezes vira à esquerda, 5 % à direita
-              ifelse random 101 < 50 [
-                rt 90
-              ] [
-                lt 90
-              ]
-            ]
-            set energy energy - 1 ; Gasta 1 unidade de energy no movimento
-          ]
+to move-cleaners
+    ask cleaners[
+      ifelse pcolor = red
+        [die]
+        [ifelse pcolor = yellow
+          [set yellow-nest yellow-nest + 1 ;;Passo 3
+           die]
+          [forward 1]
         ]
       ]
+end
+
+to move-gluttons
+  ask gluttons [
+    if [pcolor] of patch-ahead 1 != red or [pcolor] of patch-ahead 1 != yellow [
+
+      set energy energy - 1 ; gasta uma unidade de energia
+      forward 1
     ]
+
+    if pcolor = green [
+      set energy energy + food_energy_amount
+      set pcolor black
+    ]
+    if pcolor = red or pcolor = yellow [
+      die
+    ]
+     set energy energy - 1 ; gasta uma unidade de energia
+     forward 1
   ]
+
+;  ask gluttons [
+;    ifelse any? cleaners-on patch-ahead 1 and waste >= 10 [ ; cleaner à frente
+;                                                            ; Transferir a energy do cleaner para a glutton, quando esta come o cleaner
+;      let energycleaner 0 ; variável local, só para guardar energy do cleaner
+;      ask one-of cleaners-on patch-ahead 1 [
+;        set energycleaner energy ; Copiar energy do cleaner para energycleaner
+;        die
+;      ]
+;      set energy energy + energycleaner ; Somar energy do cleaner à glutton
+;                                           ; Reiniciar o número de pedaços de comida que a glutton transporta
+;      set waste 0
+;    ] [ ; Se não há cleaner, ver se há armadilha à frente
+;      ifelse [pcolor] of patch-ahead 1 = red [
+;        rt 90
+;        set energy energy - 1
+;      ][ ; Movimento quando o ninho está à frente
+;         ; Movimento quando o ninho está à frente
+;        ifelse [pcolor] of patch-ahead 1 = blue [
+;          fd 1
+;          ; Descarrega a comida transportada
+;          set blue-nest blue-nest + waste
+;          ; inicializa a quantidade de comida que transporta
+;          set waste 0
+;          set energy energy - 1
+;        ] [
+;          ; Movimento quando a comida está à frente
+;          ifelse [pcolor] of patch-ahead 1 = green[
+;            fd 1
+;            if waste < max_waste  [
+;              set energy energy + 50 ; come erva, ganha energy
+;              set waste waste + 1
+;              ; carrega erva
+;              set pcolor black
+;              ; patch fica sem erva
+;            ]
+;          ][ ; Movimento normal
+;             ; Movimento normal
+;            ifelse random 101 < 90 [ ; anda em frente 90 % das vezes
+;              fd 1
+;            ] [
+;              ; caso contrário, 5 % das vezes vira à esquerda, 5 % à direita
+;              ifelse random 101 < 50 [
+;                rt 90
+;              ] [
+;                lt 90
+;              ]
+;            ]
+;            set energy energy - 1 ; Gasta 1 unidade de energy no movimento
+;          ]
+;        ]
+;      ]
+;    ]
+;  ]
 end
 
 to check-death
@@ -178,28 +208,15 @@ to regrow-terrain
   ]
   if count patches with [pcolor = red] < count patches * 0.01 * starting_toxic_waste [ ; calculate the percentage of the initial value
     ask one-of patches with [pcolor = black ] [
-      set pcolor
+      set pcolor red
     ]
   ]
   if count patches with [pcolor = yellow] < count patches * 0.01 * starting_normal_waste [ ; calculate the percentage of the initial value
     ask one-of patches with [pcolor = black ] [
-      set pcolor green
+      set pcolor yellow
     ]
   ]
 end
-
-to move-cleaners
-    ask cleaners[
-      ifelse pcolor = red
-        [die]
-        [ifelse pcolor = yellow
-          [set yellow-nest yellow-nest + 1 ;;Passo 3
-           die]
-          [forward 1]
-        ]
-      ]
-end
-
 
 ;;Passo 4
 to ChangeArmadilhas

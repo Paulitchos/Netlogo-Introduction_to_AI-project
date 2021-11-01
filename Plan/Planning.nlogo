@@ -74,3 +74,13 @@ Functions:
   Go
     - in each iteration they lose a unit of energy
     - if energy reaches value <= 0 the agent dies
+
+
+  ask gluttons [
+    ifelse [pcolor] of patch-ahead 1 != red or [pcolor] of patch-ahead 1 != yellow [
+      set pcolor white
+      set energy energy - 1 ; gasta uma unidade de energia
+      forward 1
+    ] [
+      
+    ]
