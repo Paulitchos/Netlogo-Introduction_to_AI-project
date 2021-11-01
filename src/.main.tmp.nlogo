@@ -87,6 +87,7 @@ to go
   move-gluttons
   move-cleaners
   check-death ; Ver se morreram
+  reproduce
   regrow-terrain ; Mantém níveis adequados das patches
   if count turtles = 0 [ ; Ver se termina
     stop
@@ -132,10 +133,12 @@ to move-cleaners
     ; PSEUDOCODIGO
     ; if waste != full
     ; if waste = full - 1
+    ; vê depositos a toda a volta e anda, se não encontra
     ; vê lixo normal a toda a volta e anda, se não encontra
     ; vê food a toda a volta e anda e anda, se não enconra
     ; anda
     ; else
+    ; vê depositos a toda a volta e anda, se não encontra
     ; vê lixo toxio a toda a volta e anda, se não encontra
     ; vê lixo normal a toda a volta e anda, se não encontra
     ; vê food a toda a volta e anda e anda, se não enconra
@@ -150,39 +153,61 @@ to move-cleaners
     ifelse waste != max_waste [
 
       ifelse waste = max_waste - 1[
+        ; vê depositos a toda a volta e anda, se não encontra
         ; vê lixo normal a toda a volta e anda, se não encontra
         ; vê food a toda a volta e anda e anda, se não enconra
         ; anda
 
         ; vê lixo normal a toda a volta e anda, se não encontra
         ifelse [pcolor] of patch-ahead 1 = blue [
-          set energy energy - 1 ; gasta uma unidade de energia
+          set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
           forward 1
         ] [
           ifelse [pcolor] of patch-right-and-ahead 90 1 = blue [
-            set energy energy - 1 ; gasta uma unidade de energia
+            set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
             right 90
           ] [
             ifelse [pcolor] of patch-ahead 1 = yellow [
-              set energy energy - 1 ; gasta uma unidade de energia
+              set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
               forward 1
             ] [
               ifelse [pcolor] of patch-right-and-ahead 90 1 = yellow [
-                set energy energy - 1 ; gasta uma unidade de energia
+                set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
                 right 90
               ] [
                 ; vê food a toda a volta e anda e anda, se não enconra
-                ifelse [pcolor] of patch-ahead 1 = green [
-                  set energy energy - 1 ; gasta uma unidade de energia
+                ifelse [pcolor] of patch-ahead waste = green [
+                  set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
                   forward 1
                 ] [
                   ifelse [pcolor] of patch-right-and-ahead 90 1 = green [
-                    set energy energy - 1 ; gasta uma unidade de energia
+                    set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
                     right 90
                   ] [
                     ; anda
-                    set energy energy - 1 ; gasta uma unidade de energia
-                    forward 1
+
+                    ; para impedir que fiquem presos em reservatorios com lixo à volta
+                    ifelse random 501 = 500 [
+                      set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+                      forward 1
+                    ] [
+                      ifelse random 501 = 500 [
+                        set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+                        right 1
+                      ] [
+                        ifelse random 501 = 500 [
+                          set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+                          left 1
+                        ] [
+
+                          set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+                          forward 1
+                        ]
+                      ]
+                    ]
+
+
+
                   ]
                 ]
               ]
@@ -191,49 +216,113 @@ to move-cleaners
         ]
 
       ] [
-
+        ; vê depositos a toda a volta e anda, se não encontra
         ; vê lixo toxio a toda a volta e anda, se não encontra
         ; vê lixo normal a toda a volta e anda, se não encontra
         ; vê food a toda a volta e anda e anda, se não enconra
         ; anda
 
         ifelse [pcolor] of patch-ahead 1 = blue [
-          set energy energy - 1 ; gasta uma unidade de energia
-          forward 1
+
+          ; para impedir que fiquem presos em reservatorios com lixo à volta
+          ifelse random 501 = 500 [
+            set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+            forward 1
+          ] [
+            ifelse random 501 = 500 [
+              set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+              right 1
+            ] [
+              ifelse random 501 = 500 [
+                set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+                left 1
+              ] [
+
+                set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+                forward 1
+
+              ]
+            ]
+          ]
+
         ] [
           ifelse [pcolor] of patch-right-and-ahead 90 1 = blue [
-            set energy energy - 1 ; gasta uma unidade de energia
-            right 90
+
+            ; para impedir que fiquem presos em reservatorios com lixo à volta
+            ifelse random 501 = 500 [
+              set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+              forward 1
+            ] [
+              ifelse random 501 = 500 [
+                set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+                right 1
+              ] [
+                ifelse random 501 = 500 [
+                  set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+                  left 1
+                ] [
+
+                  set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+                  right 90
+
+                ]
+              ]
+            ]
+
+
           ] [
             ifelse [pcolor] of patch-ahead 1 = red [
-              set energy energy - 1 ; gasta uma unidade de energia
+              set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
               forward 1
             ] [
               ifelse [pcolor] of patch-right-and-ahead 90 1 = red [
-                set energy energy - 1 ; gasta uma unidade de energia
+                set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
                 right 90
               ] [
                 ; vê lixo normal a toda a volta e anda, se não encontra
                 ifelse [pcolor] of patch-ahead 1 = yellow [
-                  set energy energy - 1 ; gasta uma unidade de energia
+                  set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
                   forward 1
                 ] [
                   ifelse [pcolor] of patch-right-and-ahead 90 1 = yellow [
-                    set energy energy - 1 ; gasta uma unidade de energia
+                    set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
                     right 90
                   ] [
                     ; vê food a toda a volta e anda e anda, se não enconra
                     ifelse [pcolor] of patch-ahead 1 = green [
-                      set energy energy - 1 ; gasta uma unidade de energia
+                      set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
                       forward 1
                     ] [
                       ifelse [pcolor] of patch-right-and-ahead 90 1 = green [
-                        set energy energy - 1 ; gasta uma unidade de energia
+                        set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
                         right 90
                       ] [
                         ; anda
-                        set energy energy - 1 ; gasta uma unidade de energia
-                        forward 1
+
+
+                        ; para impedir que fiquem presos em reservatorios com lixo à volta
+                        ifelse random 501 = 500 [
+                          set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+                          forward 1
+                        ] [
+                          ifelse random 501 = 500 [
+                            set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+                            right 1
+                          ] [
+                            ifelse random 501 = 500 [
+                              set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+                              left 1
+                            ] [
+
+                              set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+                              forward 1
+
+                            ]
+                          ]
+                        ]
+
+
+
                       ]
                     ]
                   ]
@@ -254,25 +343,45 @@ to move-cleaners
 
       ; vê depositos a toda a volta e anda, se não encontra
       ifelse [pcolor] of patch-ahead 1 = blue [
-        set energy energy - 1 ; gasta uma unidade de energia
+        set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
         forward 1
       ] [
         ifelse [pcolor] of patch-right-and-ahead 90 1 = blue [
-          set energy energy - 1 ; gasta uma unidade de energia
+          set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
           right 90
         ] [
       ; vê food a toda a volta e anda e anda, se não enconra
           ifelse [pcolor] of patch-ahead 1 = green [
-            set energy energy - 1 ; gasta uma unidade de energia
+            set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
             forward 1
           ] [
             ifelse [pcolor] of patch-right-and-ahead 90 1 = green [
-              set energy energy - 1 ; gasta uma unidade de energia
+              set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
               right 90
             ] [
               ; anda
-              set energy energy - 1 ; gasta uma unidade de energia
-              forward 1
+
+              ; para impedir que fiquem presos em reservatorios com lixo à volta
+              ifelse random 501 = 500 [
+                set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+                forward 1
+              ] [
+                ifelse random 501 = 500 [
+                  set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+                  right 1
+                ] [
+                  ifelse random 501 = 500 [
+                    set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+                    left 1
+                  ] [
+
+                    set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
+                    forward 1
+                  ]
+                ]
+              ]
+
+
             ]
           ]
         ]
@@ -415,6 +524,18 @@ to display-labels ; Colocar agentes a mostrar energy
   ]
 end
 
+to reproduce
+  ask gluttons [
+    if energy > food_energy_amount [ ; Se atinge limiar de energia, reproduz c/ prob
+      if random 101 < 1 [ ; Ver probabilidade
+        set energy round(energy / 2) ; Divide energia / 2 e arredonda
+        hatch 1 [jump 5]
+        ; Reproduz-se, filho aparece à frente
+      ]
+    ]
+  ]
+end
+
 to regrow-terrain
 
   if count patches with [pcolor = green] < count patches * 0.01 * starting_food [ ; calculate the percentage of the initial value
@@ -504,7 +625,7 @@ food_energy_amount
 food_energy_amount
 1
 50
-40.0
+30.0
 1
 1
 NIL
@@ -519,17 +640,17 @@ starting_toxic_waste
 starting_toxic_waste
 0
 15
-13.0
+12.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-456
-602
-612
-635
+395
+587
+551
+620
 starting_food
 starting_food
 5
@@ -541,10 +662,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-678
-601
-834
-634
+617
+586
+773
+619
 n_deposits
 n_deposits
 1
@@ -684,7 +805,7 @@ SWITCH
 505
 show_waste
 show_waste
-0
+1
 1
 -1000
 
