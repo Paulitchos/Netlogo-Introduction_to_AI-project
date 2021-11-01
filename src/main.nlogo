@@ -34,28 +34,17 @@ to setup-patches
 
   clear-all
   set-patch-size 15
-  ;TRAPS – criar 5 % de patches vermelhas
   ask patches with [pcolor = black] [
-    if random 101 < 5 [
+    if random 101 < starting_toxic_waste [
       set pcolor red
     ]
   ]
-    ; Criação da erva
     ask patches with [pcolor = black] [
-    if random 101 < 15 [
+    if random 101 < starting_normal_waste [
       set pcolor green
     ]
   ]
   reset-ticks
-  ; Criação do ninho das gluttons
-  ask one-of patches with [pcolor = black] [
-    set pcolor blue
-  ]
-  ; Criação do ninho dos caracóis
-  ask one-of patches with [pcolor = black]
-  [
-    set pcolor yellow
-  ]
   ; Inicialização do número de agentes presente no respetivo ninho
   set blue-nest 0    ;;Passo 3 - forma como se dá valores a variaveis
   set yellow-nest 0  ;;Passo 3
@@ -358,7 +347,7 @@ starting_toxic_waste
 starting_toxic_waste
 0
 15
-15.0
+5.0
 1
 1
 NIL
@@ -480,7 +469,7 @@ starting_normal_waste
 starting_normal_waste
 0
 15
-15.0
+5.0
 1
 1
 NIL
