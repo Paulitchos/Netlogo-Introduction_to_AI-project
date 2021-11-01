@@ -41,7 +41,12 @@ to setup-patches
   ]
     ask patches with [pcolor = black] [
     if random 101 < starting_normal_waste [
-      set pcolor green
+      set pcolor yellow
+    ]
+  ]
+   ask patches with [pcolor = black] [
+    if random 101 < n_deposits [
+      set pcolor blue
     ]
   ]
   reset-ticks
