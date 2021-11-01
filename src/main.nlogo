@@ -73,6 +73,7 @@ to setup-turtles
   ask turtles [ ; Comum a todos agentes
                 ; Posição inicial fora de waste
     set heading 0      ; turtle is now facing north
+    set size 2
     setxy random-xcor random-ycor
     while [pcolor = red or pcolor = yellow or pcolor = green] [
       setxy random-xcor random-ycor
@@ -99,6 +100,8 @@ to move-cleaners
 
     if pcolor = green [
       set pcolor black
+      ask one-of patches with [pcolor = black] [
+        set pcolor green ]
       ifelse waste < (max_waste / 2) [
         set energy energy + food_energy_amount
       ] [
@@ -109,12 +112,16 @@ to move-cleaners
       if waste + 2 <= max_waste [
         set waste (waste + 2)
         set pcolor black
+        ask one-of patches with [pcolor = black] [
+        set pcolor red ]
       ]
     ]
     if pcolor = yellow [
       if waste + 1 <= max_waste [
         set waste (waste + 1)
         set pcolor black
+        ask one-of patches with [pcolor = black] [
+        set pcolor yellow ]
       ]
     ]
     if pcolor = blue [
@@ -273,6 +280,8 @@ to move-gluttons
     if pcolor = green [
       set energy energy + food_energy_amount
       set pcolor black
+      ask one-of patches with [pcolor = black] [
+        set pcolor green ]
     ]
 
     ; check energy lost through percieved waste
@@ -368,32 +377,23 @@ to check-death
 end
 
 to display-labels ; Colocar agentes a mostrar energy
-
-  ask turtles [
-    set label ""
-    if show_energy [
-      ; Se botão está on, mostra labels
-      set label energy
+  ifelse show_waste [
+    ask cleaners [
+      set label ""
+      set label waste
+    ]
+    ask gluttons [
+      set label ""
+    ]
+  ] [
+    ask turtles [
+      set label ""
+      if show_energy [
+        ; Se botão está on, mostra labels
+        set label energy
+      ]
     ]
   ]
-
-;  ifelse show_waste [
-;    ask cleaners [
-;      set label ""
-;      set label waste
-;    ]
-;    ask gluttons [
-;      set label ""
-;    ]
-;  ] [
-;    ask turtles [
-;      set label ""
-;      if show_energy [
-;        ; Se botão está on, mostra labels
-;        set label energy
-;      ]
-;    ]
-;  ]
 end
 
 to regrow-terrain
@@ -542,7 +542,7 @@ INPUTBOX
 100
 424
 num_gluttons
-5.0
+50.0
 1
 0
 Number
@@ -553,7 +553,7 @@ INPUTBOX
 199
 424
 num_cleaners
-5.0
+50.0
 1
 0
 Number
