@@ -15,8 +15,8 @@
 ;;Agents
 breed[gluttons glutton] ; cria agentes glutton (tens que defenir) // como te vais referir a eles pelo sigular e pelo plural)
 breed[cleaners cleaner] ;
-turtles-own [energy waste] ; todos os agentes têm energy
-;cleaners-own [waste] ; ; os cleaners podem carregar comida
+turtles-own [energy] ; todos os agentes têm energy
+cleaners-own [waste] ; ; os cleaners podem carregar comida
 
 ;;Global variebles
 globals [blue-nest  yellow-nest]  ; declaração de 2 variáveis globais
@@ -95,15 +95,87 @@ to go
 end
 
 to move-cleaners
-    ask cleaners[
-      ifelse pcolor = red
-        [die]
-        [ifelse pcolor = yellow
-          [set yellow-nest yellow-nest + 1 ;;Passo 3
-           die]
-          [forward 1]
-        ]
+  ask cleaners [
+    set waste waste + 1
+
+    if pcolor = green [
+      set pcolor black
+      ifelse waste < (max_waste / 2) [
+        set energy energy + food_energy_amount
+      ] [
+        set energy energy + (food_energy_amount / 2)
       ]
+    ]
+    if pcolor = red [
+      if waste + 2 <= max_waste [
+        set waste (waste + 2)
+        set pcolor black
+      ]
+    ]
+    if pcolor = yellow [
+      if waste  <= max_waste [
+        set waste (waste + 1)
+        set pcolor black
+      ]
+    ]
+    if pcolor = blue [
+        set energy round(energy + (10 * waste))
+        set waste 0
+    ]
+
+    ; PSEUDOCODIGO
+    ; if waste != full
+        ; if waste = full - 1
+          ; vê lixo normal a toda a volta e anda, se não encontra
+          ; vê food a toda a volta e anda e anda, se não enconra
+          ; anda
+        ; else
+          ; vê lixo toxio a toda a volta e anda, se não encontra
+          ; vê lixo normal a toda a volta e anda, se não encontra
+          ; vê food a toda a volta e anda e anda, se não enconra
+          ; anda
+    ; else
+        ; vê depositos a toda a volta e anda, se não encontra
+        ; vê food a toda a volta e anda e anda, se não enconra
+        ; desvia-se dos lixos
+        ; anda
+
+
+    ; vê lixo normal a toda a volta e anda, se não encontra
+    ifelse [pcolor] of patch-ahead 1 = yellow [
+      set energy energy - 1 ; gasta uma unidade de energia
+      forward 1
+    ] [
+      ifelse [pcolor] of patch-right-and-ahead 90 1 = yellow [
+        set energy energy - 1 ; gasta uma unidade de energia
+        right 90
+      ] [
+        ; vê food a toda a volta e anda e anda, se não enconra
+        ifelse [pcolor] of patch-ahead 1 = green [
+          set energy energy - 1 ; gasta uma unidade de energia
+          forward 1
+        ] [
+          ifelse [pcolor] of patch-right-and-ahead 90 1 = green [
+            set energy energy - 1 ; gasta uma unidade de energia
+            right 90
+          ] [
+            ; anda
+            set energy energy - 1 ; gasta uma unidade de energia
+            forward 1
+          ]
+        ]
+
+      ]
+    ]
+
+
+
+
+
+
+
+
+  ]
 end
 
 to move-gluttons
@@ -118,20 +190,20 @@ to move-gluttons
     if [pcolor] of patch-ahead 1 = red [; check if any color red
       set energy round(energy * 0.9)         ; 10% loss of energy
     ]
-    if [pcolor] of  = red [
+    if [pcolor] of patch-right-and-ahead 90 1 = red [
       set energy round(energy * 0.9)
     ]
-    if [pcolor] of patch-at -1 0 = red [
+    if [pcolor] of patch-right-and-ahead -90 1 = red [
       set energy round(energy * 0.9)
     ]
 
     if [pcolor] of patch-ahead 1 = yellow [; check if any color yellow
       set energy round(energy * 0.95)           ; 5% loss of energy
     ]
-    if [pcolor] of patch-at 1 0 = yellow [
+    if [pcolor] of patch-right-and-ahead 90 1 = yellow [
       set energy round(energy * 0.95)
     ]
-    if [pcolor] of patch-at -1 0 = yellow [
+    if [pcolor] of patch-right-and-ahead -90 1 = yellow [
       set energy round(energy * 0.95)
     ]
 
@@ -140,11 +212,11 @@ to move-gluttons
       set energy energy - 1 ; gasta uma unidade de energia
       forward 1
     ] [
-      ifelse [pcolor] of patch-at 1 0 = green [
+      ifelse [pcolor] of patch-right-and-ahead 90 1 = green [
         set energy energy - 1 ; gasta uma unidade de energia
         right 90
       ] [
-        ifelse [pcolor] of patch-at -1 0 = green [
+        ifelse [pcolor] of patch-right-and-ahead -90 1 = green [
           set energy energy - 1 ; gasta uma unidade de energia
           left 90
         ] [
@@ -152,8 +224,7 @@ to move-gluttons
 
 
 
-
-          ;ifelse [pcolor] of patch-ahead 1 != green and [pcolor] of patch-at 1 0 != green and [pcolor] of patch-at -1 0 != green[
+          ;ifelse [pcolor] of patch-ahead 1 != green and [pcolor] of patch-right-and-ahead 90 1 != green and [pcolor] of patch-right-and-ahead -90 1 != green[
           ;no greens
 
           ifelse [pcolor] of patch-ahead 1 != red and [pcolor] of patch-ahead 1 != yellow [
@@ -165,7 +236,7 @@ to move-gluttons
             ; patch-at 0 1 -> right
             ; patch-at 0 -1 -> left
             ifelse random 2 = 0 [ ; look right or left first
-              ifelse [pcolor] of patch-at 1 0 != red and [pcolor] of patch-at 1 0 != yellow [ ; look right
+              ifelse [pcolor] of patch-right-and-ahead 90 1 != red and [pcolor] of patch-right-and-ahead 90 1 != yellow [ ; look right
                                                                                               ; no waste right
                 set energy energy - 1
                 right 90
@@ -176,7 +247,7 @@ to move-gluttons
                 left 90
               ]
             ] [
-              ifelse [pcolor] of patch-at -1 0 != red and [pcolor] of patch-at -1 0 != yellow [ ; look left
+              ifelse [pcolor] of patch-right-and-ahead -90 1 != red and [pcolor] of patch-right-and-ahead -90 1 != yellow [ ; look left
                                                                                                 ; no waste right
                 set energy energy - 1
                 left 90
@@ -192,85 +263,10 @@ to move-gluttons
 
 
 
-
         ]
       ]
     ]
   ]
-
-;  ask gluttons [
-;    ifelse [pcolor] of patch-ahead 1 != red or [pcolor] of patch-ahead 1 != yellow [
-;      set pcolor white
-;      set energy energy - 1 ; gasta uma unidade de energia
-;      forward 1
-;    ] [
-;
-;    ]
-;
-;    if pcolor = green [
-;      set energy energy + food_energy_amount
-;      set pcolor black
-;    ]
-;    if pcolor = red or pcolor = yellow [
-;      die
-;    ]
-;     set energy energy - 1 ; gasta uma unidade de energia
-;     forward 1
-;  ]
-
-;  ask gluttons [
-;    ifelse any? cleaners-on patch-ahead 1 and waste >= 10 [ ; cleaner à frente
-;                                                            ; Transferir a energy do cleaner para a glutton, quando esta come o cleaner
-;      let energycleaner 0 ; variável local, só para guardar energy do cleaner
-;      ask one-of cleaners-on patch-ahead 1 [
-;        set energycleaner energy ; Copiar energy do cleaner para energycleaner
-;        die
-;      ]
-;      set energy energy + energycleaner ; Somar energy do cleaner à glutton
-;                                           ; Reiniciar o número de pedaços de comida que a glutton transporta
-;      set waste 0
-;    ] [ ; Se não há cleaner, ver se há armadilha à frente
-;      ifelse [pcolor] of patch-ahead 1 = red [
-;        rt 90
-;        set energy energy - 1
-;      ][ ; Movimento quando o ninho está à frente
-;         ; Movimento quando o ninho está à frente
-;        ifelse [pcolor] of patch-ahead 1 = blue [
-;          fd 1
-;          ; Descarrega a comida transportada
-;          set blue-nest blue-nest + waste
-;          ; inicializa a quantidade de comida que transporta
-;          set waste 0
-;          set energy energy - 1
-;        ] [
-;          ; Movimento quando a comida está à frente
-;          ifelse [pcolor] of patch-ahead 1 = green[
-;            fd 1
-;            if waste < max_waste  [
-;              set energy energy + 50 ; come erva, ganha energy
-;              set waste waste + 1
-;              ; carrega erva
-;              set pcolor black
-;              ; patch fica sem erva
-;            ]
-;          ][ ; Movimento normal
-;             ; Movimento normal
-;            ifelse random 101 < 90 [ ; anda em frente 90 % das vezes
-;              fd 1
-;            ] [
-;              ; caso contrário, 5 % das vezes vira à esquerda, 5 % à direita
-;              ifelse random 101 < 50 [
-;                rt 90
-;              ] [
-;                lt 90
-;              ]
-;            ]
-;            set energy energy - 1 ; Gasta 1 unidade de energy no movimento
-;          ]
-;        ]
-;      ]
-;    ]
-;  ]
 end
 
 to check-death
@@ -283,12 +279,16 @@ to check-death
 end
 
 to display-labels ; Colocar agentes a mostrar energy
-  ask turtles [
+;  ask turtles [
+;    set label ""
+;    if show_energy [
+;      ; Se botão está on, mostra labels
+;      set label energy
+;    ]
+;  ]
+  ask cleaners [
     set label ""
-    if show_energy [
-      ; Se botão está on, mostra labels
-      set label energy
-    ]
+    set label waste
   ]
 end
 
@@ -318,42 +318,6 @@ to ChangeArmadilhas
        [set pcolor red]
     set pcolor black
   ]
-end
-
-;;Passo 5
-to move-cleaners2
-    ask cleaners[
-      ifelse [pcolor] of patch-ahead 1 = yellow[
-         fd 1
-         set yellow-nest yellow-nest + 1
-         die]
-      [ifelse [pcolor] of patch-left-and-ahead 90 1 = yellow[
-          lt 90
-          fd 1
-          set yellow-nest yellow-nest + 1
-          die]
-          [ifelse [pcolor] of patch-right-and-ahead 90 1 = yellow[
-              rt 90
-              fd 1
-              set yellow-nest yellow-nest + 1
-              die]
-              [ifelse [pcolor] of patch-ahead 1 = red[
-                  rt 90]
-                  [ifelse [pcolor] of patch-left-and-ahead 90 1 = red[
-                      fd 1]
-                      [ifelse [pcolor] of patch-right-and-ahead 90 1 = red
-                        [fd 1]
-                        [ifelse random 101 <= 90
-                          [forward 1]
-                          [ifelse random 101 <= 50 [rt 90][lt 90]
-                          ]
-                        ]
-                      ]
-                  ]
-              ]
-          ]
-      ]
-    ]
 end
 
 ;;Passo 6
