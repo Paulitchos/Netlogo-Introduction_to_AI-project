@@ -41,11 +41,10 @@ to setup-patches
   ]
     ask patches with [pcolor = black] [
     if random 101 < starting_normal_waste [
-      set pcolor green
+      set pcolor
     ]
   ]
   reset-ticks
-
   ; Inicialização do número de agentes presente no respetivo ninho
   set blue-nest 0    ;;Passo 3 - forma como se dá valores a variaveis
   set yellow-nest 0  ;;Passo 3
@@ -348,7 +347,7 @@ starting_toxic_waste
 starting_toxic_waste
 0
 15
-15.0
+5.0
 1
 1
 NIL
@@ -470,7 +469,7 @@ starting_normal_waste
 starting_normal_waste
 0
 15
-15.0
+5.0
 1
 1
 NIL
