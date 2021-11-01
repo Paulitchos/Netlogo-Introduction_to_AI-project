@@ -15,8 +15,8 @@
 ;;Agents
 breed[gluttons glutton] ; cria agentes glutton (tens que defenir) // como te vais referir a eles pelo sigular e pelo plural)
 breed[cleaners cleaner] ;
-turtles-own [energy] ; todos os agentes têm energy
-cleaners-own [waste] ; ; os cleaners podem carregar comida
+turtles-own [energy waste] ; todos os agentes têm energy
+;cleaners-own [waste] ; ; os cleaners podem carregar comida
 
 ;;Global variebles
 globals [blue-nest  yellow-nest]  ; declaração de 2 variáveis globais
@@ -31,7 +31,6 @@ to setup
 
 ;;Passo 2
 to setup-patches
-
   clear-all
   set-patch-size 15
   ask patches with [pcolor = black] [
@@ -39,54 +38,59 @@ to setup-patches
       set pcolor red
     ]
   ]
-    ask patches with [pcolor = black] [
+  ask patches with [pcolor = black] [
     if random 101 < starting_normal_waste [
-      set pcolor
+      set pcolor yellow
+    ]
+  ]
+  ask patches with [pcolor = black] [
+    if random 101 < starting_food [
+      set pcolor green
+    ]
+  ]
+  repeat n_deposits [ ; 1 a 10
+    ask one-of patches with [pcolor = black] [
+      set pcolor blue
     ]
   ]
   reset-ticks
-  ; Inicialização do número de agentes presente no respetivo ninho
-  set blue-nest 0    ;;Passo 3 - forma como se dá valores a variaveis
-  set yellow-nest 0  ;;Passo 3
 end
 
 
 ;;Passo 2
 to setup-turtles
   create-gluttons num_gluttons [
-    set shape "bug"
-    set color blue
-    set waste 0
+    set shape "turtle"
+    set color brown
     ; colocação junta-se aos caracóis (abaixo)
   ]
   create-cleaners num_cleaners [ ; Criar
-    set shape "target"
-    set color yellow
+    set shape "truck"
+    set color white
+    set waste 0
   ]
+
   ask turtles [ ; Comum a todos agentes
-                ; Posição inicial fora de armadilhadas
+                ; Posição inicial fora de waste
+    set heading 0      ; turtle is now facing north
     setxy random-xcor random-ycor
-    while [pcolor = red] [
+    while [pcolor = red or pcolor = yellow or pcolor = green] [
       setxy random-xcor random-ycor
     ]
-    set energy 100 ; energy inicial
+    set energy starting_energy ; energy inicial
   ]
-  display-labels ; Função a fazer
+  display-labels
 end
 
 to go
   move-gluttons
   move-cleaners
   ; check-death ; Ver se morreram
-  if true [ ; botão on-off
-    reproduction ; ver se reproduz
-  ]
-  regrow-food ; Fazer crescer erva
+  regrow-terrain ; Mantém níveis adequados das patches
   if count turtles = 0 [ ; Ver se termina
     stop
   ]
   display-labels
-  ; competition ; Ver se competem
   tick
 end
 
@@ -155,42 +159,31 @@ to check-death
   ]
 end
 
-to reproduction
-  ask gluttons [
-    if energy > food_energy_amount [;birthEnergy [ ; Se atinge limiar de energy, reproduz c/ prob
-      if random 101 < starting_toxic_waste[;reproductiongluttons [ ; Ver probabilidade
-        set energy round(energy / 2) ; Divide energy / 2 e arredonda
-        hatch 1 [jump 5]
-        ; Reproduz-se, filho aparece à frente
-      ]
-    ]
-  ]
-  ask cleaners
-  [
-    if energy > food_energy_amount[;birthEnergy [
-      if random 101 < starting_toxic_waste[;reproductioncleaners [
-        set energy round(energy / 2)
-        hatch 1 [move-to patch-left-and-ahead 90 1] ; filho à esquerda
-      ]
-    ]
-  ]
-end
-
 to display-labels ; Colocar agentes a mostrar energy
   ask turtles [
     set label ""
-    if true [
+    if show_energy [
       ; Se botão está on, mostra labels
       set label energy
     ]
   ]
 end
-to regrow-food
-  if count patches with [pcolor = green] < 50 [
-    ask patches with [pcolor = black] [
-      if random 101 < 2 [
-        set pcolor green
-      ]
+
+to regrow-terrain
+
+  if count patches with [pcolor = green] < count patches * 0.01 * starting_food [ ; calculate the percentage of the initial value
+    ask one-of patches with [pcolor = black ] [
+      set pcolor green
+    ]
+  ]
+  if count patches with [pcolor = red] < count patches * 0.01 * starting_toxic_waste [ ; calculate the percentage of the initial value
+    ask one-of patches with [pcolor = black ] [
+      set pcolor
+    ]
+  ]
+  if count patches with [pcolor = yellow] < count patches * 0.01 * starting_normal_waste [ ; calculate the percentage of the initial value
+    ask one-of patches with [pcolor = black ] [
+      set pcolor green
     ]
   ]
 end
@@ -332,7 +325,7 @@ food_energy_amount
 food_energy_amount
 1
 50
-50.0
+31.0
 1
 1
 NIL
@@ -347,7 +340,7 @@ starting_toxic_waste
 starting_toxic_waste
 0
 15
-5.0
+11.0
 1
 1
 NIL
@@ -411,7 +404,7 @@ INPUTBOX
 302
 425
 starting_energy
-5.0
+100.0
 1
 0
 Number
@@ -469,7 +462,7 @@ starting_normal_waste
 starting_normal_waste
 0
 15
-5.0
+10.0
 1
 1
 NIL
@@ -491,8 +484,8 @@ true
 true
 "" ""
 PENS
-"num_gluttons" 1.0 0 -13840069 true "" "plot count turtles"
-"num_cleaners" 1.0 0 -14454117 true "" "plot count turtles"
+"num_gluttons" 1.0 0 -13840069 true "" "plot count gluttons"
+"num_cleaners" 1.0 0 -14454117 true "" "plot count cleaners"
 
 INPUTBOX
 116
@@ -504,6 +497,17 @@ tick
 1
 0
 Number
+
+SWITCH
+215
+447
+365
+480
+show_energy
+show_energy
+0
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
