@@ -487,12 +487,55 @@ to move-cleaners
 ; vê food a toda a volta e anda e anda, se não enconra 
 ; anda
 
-; vê lixo toxic a toda a volta e anda, se não encontra
+    ; vê lixo toxic a toda a volta e anda, se não encontra
     ifelse [pcolor] of patch-ahead 1 = red [
       set energy energy - 1 ; gasta uma unidade de energia
       forward 1
     ] [
       ifelse [pcolor] of patch-right-and-ahead 90 1 = red [
+        set energy energy - 1 ; gasta uma unidade de energia
+        right 90
+      ] [
+        ; vê lixo normal a toda a volta e anda, se não encontra
+        ifelse [pcolor] of patch-ahead 1 = yellow [
+          set energy energy - 1 ; gasta uma unidade de energia
+          forward 1
+        ] [
+          ifelse [pcolor] of patch-right-and-ahead 90 1 = yellow [
+            set energy energy - 1 ; gasta uma unidade de energia
+            right 90
+          ] [
+            ; vê food a toda a volta e anda e anda, se não enconra 
+            ifelse [pcolor] of patch-ahead 1 = green [
+              set energy energy - 1 ; gasta uma unidade de energia
+              forward 1
+            ] [
+              ifelse [pcolor] of patch-right-and-ahead 90 1 = green [
+                set energy energy - 1 ; gasta uma unidade de energia
+                right 90
+              ] [
+                ; anda
+                set energy energy - 1 ; gasta uma unidade de energia
+                forward 1
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]
+
+
+;===========================================================
+; vê depositos a toda a volta e anda, se não encontra
+; vê food a toda a volta e anda e anda, se não enconra 
+; ( desvia-se dos lixos)
+; anda
+    ; vê lixo normal a toda a volta e anda, se não encontra
+    ifelse [pcolor] of patch-ahead 1 = blue [
+      set energy energy - 1 ; gasta uma unidade de energia
+      forward 1
+    ] [
+      ifelse [pcolor] of patch-right-and-ahead 90 1 = blue [
         set energy energy - 1 ; gasta uma unidade de energia
         right 90
       ] [
@@ -510,11 +553,8 @@ to move-cleaners
             forward 1
           ]
         ]
-        
       ]
     ]
-
-
 
 
 

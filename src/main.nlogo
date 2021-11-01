@@ -85,7 +85,7 @@ end
 to go
   move-gluttons
   move-cleaners
-  ; check-death ; Ver se morreram
+  check-death ; Ver se morreram
   regrow-terrain ; Mantém níveis adequados das patches
   if count turtles = 0 [ ; Ver se termina
     stop
@@ -118,54 +118,144 @@ to move-cleaners
       ]
     ]
     if pcolor = blue [
-        set energy round(energy + (10 * waste))
-        set waste 0
+      set energy round(energy + (10 * waste))
+      set waste 0
     ]
 
     ; PSEUDOCODIGO
     ; if waste != full
-        ; if waste = full - 1
-          ; vê lixo normal a toda a volta e anda, se não encontra
-          ; vê food a toda a volta e anda e anda, se não enconra
-          ; anda
-        ; else
-          ; vê lixo toxio a toda a volta e anda, se não encontra
-          ; vê lixo normal a toda a volta e anda, se não encontra
-          ; vê food a toda a volta e anda e anda, se não enconra
-          ; anda
+    ; if waste = full - 1
+    ; vê lixo normal a toda a volta e anda, se não encontra
+    ; vê food a toda a volta e anda e anda, se não enconra
+    ; anda
     ; else
-        ; vê depositos a toda a volta e anda, se não encontra
+    ; vê lixo toxio a toda a volta e anda, se não encontra
+    ; vê lixo normal a toda a volta e anda, se não encontra
+    ; vê food a toda a volta e anda e anda, se não enconra
+    ; anda
+    ; else
+    ; vê depositos a toda a volta e anda, se não encontra
+    ; vê food a toda a volta e anda e anda, se não enconra
+    ; desvia-se dos lixos
+    ; anda
+
+
+    ifelse waste != max_waste [
+
+      ifelse waste = max_waste - 1[
+        ; vê lixo normal a toda a volta e anda, se não encontra
         ; vê food a toda a volta e anda e anda, se não enconra
-        ; desvia-se dos lixos
         ; anda
 
-
-    ; vê lixo normal a toda a volta e anda, se não encontra
-    ifelse [pcolor] of patch-ahead 1 = yellow [
-      set energy energy - 1 ; gasta uma unidade de energia
-      forward 1
-    ] [
-      ifelse [pcolor] of patch-right-and-ahead 90 1 = yellow [
-        set energy energy - 1 ; gasta uma unidade de energia
-        right 90
-      ] [
-        ; vê food a toda a volta e anda e anda, se não enconra
-        ifelse [pcolor] of patch-ahead 1 = green [
+        ; vê lixo normal a toda a volta e anda, se não encontra
+        ifelse [pcolor] of patch-ahead 1 = yellow [
           set energy energy - 1 ; gasta uma unidade de energia
           forward 1
         ] [
-          ifelse [pcolor] of patch-right-and-ahead 90 1 = green [
+          ifelse [pcolor] of patch-right-and-ahead 90 1 = yellow [
             set energy energy - 1 ; gasta uma unidade de energia
             right 90
           ] [
-            ; anda
-            set energy energy - 1 ; gasta uma unidade de energia
-            forward 1
+            ; vê food a toda a volta e anda e anda, se não enconra
+            ifelse [pcolor] of patch-ahead 1 = green [
+              set energy energy - 1 ; gasta uma unidade de energia
+              forward 1
+            ] [
+              ifelse [pcolor] of patch-right-and-ahead 90 1 = green [
+                set energy energy - 1 ; gasta uma unidade de energia
+                right 90
+              ] [
+                ; anda
+                set energy energy - 1 ; gasta uma unidade de energia
+                forward 1
+              ]
+            ]
+
           ]
         ]
 
+
+      ] [
+        ; vê lixo toxio a toda a volta e anda, se não encontra
+        ; vê lixo normal a toda a volta e anda, se não encontra
+        ; vê food a toda a volta e anda e anda, se não enconra
+        ; anda
+
+        ifelse [pcolor] of patch-ahead 1 = red [
+          set energy energy - 1 ; gasta uma unidade de energia
+          forward 1
+        ] [
+          ifelse [pcolor] of patch-right-and-ahead 90 1 = red [
+            set energy energy - 1 ; gasta uma unidade de energia
+            right 90
+          ] [
+            ; vê lixo normal a toda a volta e anda, se não encontra
+            ifelse [pcolor] of patch-ahead 1 = yellow [
+              set energy energy - 1 ; gasta uma unidade de energia
+              forward 1
+            ] [
+              ifelse [pcolor] of patch-right-and-ahead 90 1 = yellow [
+                set energy energy - 1 ; gasta uma unidade de energia
+                right 90
+              ] [
+                ; vê food a toda a volta e anda e anda, se não enconra
+                ifelse [pcolor] of patch-ahead 1 = green [
+                  set energy energy - 1 ; gasta uma unidade de energia
+                  forward 1
+                ] [
+                  ifelse [pcolor] of patch-right-and-ahead 90 1 = green [
+                    set energy energy - 1 ; gasta uma unidade de energia
+                    right 90
+                  ] [
+                    ; anda
+                    set energy energy - 1 ; gasta uma unidade de energia
+                    forward 1
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+
+
+
       ]
+    ] [
+      ; vê depositos a toda a volta e anda, se não encontra
+      ; vê food a toda a volta e anda e anda, se não enconra
+      ; desvia-se dos lixos
+      ; anda
+
+      ; vê lixo normal a toda a volta e anda, se não encontra
+      ifelse [pcolor] of patch-ahead 1 = blue [
+        set energy energy - 1 ; gasta uma unidade de energia
+        forward 1
+      ] [
+        ifelse [pcolor] of patch-right-and-ahead 90 1 = blue [
+          set energy energy - 1 ; gasta uma unidade de energia
+          right 90
+        ] [
+          ; vê food a toda a volta e anda e anda, se não enconra
+          ifelse [pcolor] of patch-ahead 1 = green [
+            set energy energy - 1 ; gasta uma unidade de energia
+            forward 1
+          ] [
+            ifelse [pcolor] of patch-right-and-ahead 90 1 = green [
+              set energy energy - 1 ; gasta uma unidade de energia
+              right 90
+            ] [
+              ; anda
+              set energy energy - 1 ; gasta uma unidade de energia
+              forward 1
+            ]
+          ]
+        ]
+      ]
+
+
+
     ]
+
 
 
 
@@ -278,17 +368,32 @@ to check-death
 end
 
 to display-labels ; Colocar agentes a mostrar energy
-;  ask turtles [
-;    set label ""
-;    if show_energy [
-;      ; Se botão está on, mostra labels
-;      set label energy
+
+  ask turtles [
+    set label ""
+    if show_energy [
+      ; Se botão está on, mostra labels
+      set label energy
+    ]
+  ]
+
+;  ifelse show_waste [
+;    ask cleaners [
+;      set label ""
+;      set label waste
+;    ]
+;    ask gluttons [
+;      set label ""
+;    ]
+;  ] [
+;    ask turtles [
+;      set label ""
+;      if show_energy [
+;        ; Se botão está on, mostra labels
+;        set label energy
+;      ]
 ;    ]
 ;  ]
-  ask cleaners [
-    set label ""
-    set label waste
-  ]
 end
 
 to regrow-terrain
@@ -308,24 +413,6 @@ to regrow-terrain
       set pcolor yellow
     ]
   ]
-end
-
-;;Passo 4
-to ChangeArmadilhas
-  ask patches with [pcolor = red][
-    ask one-of patches with [not any? turtles-here and pcolor != red and pcolor != blue and pcolor != yellow]
-       [set pcolor red]
-    set pcolor black
-  ]
-end
-
-;;Passo 6
-to Mimetismo
-ask gluttons[
-  ifelse any? cleaners-on neighbors
-    [set color yellow]
-    [set color blue]
-]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -413,7 +500,7 @@ starting_toxic_waste
 starting_toxic_waste
 0
 15
-11.0
+13.0
 1
 1
 NIL
@@ -572,13 +659,24 @@ tick
 Number
 
 SWITCH
-215
-447
-365
-480
+217
+434
+367
+467
 show_energy
 show_energy
 0
+1
+-1000
+
+SWITCH
+218
+474
+367
+507
+show_waste
+show_waste
+1
 1
 -1000
 
