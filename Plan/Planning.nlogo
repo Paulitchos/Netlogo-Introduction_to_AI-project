@@ -209,3 +209,51 @@ ifelse [pcolor] of patch-at 0 1 != red and [pcolor] of patch-at 0 1 != yellow [
       set pcolor black
     ]
   ]
+
+
+to move-comiloes2
+  ask comiloes
+  [
+    ifelse [pcolor] of patch-here = green
+    [
+      set pcolor black
+      set energy energy + quantEnergia
+    ]
+    [
+      ifelse [pcolor] of patch-ahead 1 = green
+      [
+        fd 1
+      ]
+      [
+        ifelse [pcolor] of patch-ahead 1 = red or [pcolor] of patch-ahead 1 = yellow
+        [
+          rt 90
+          ifelse [pcolor] of patch-ahead 1 = red
+          [
+            set energy round(energy * 0.9)
+          ]
+          [
+            set energy round(energy * 0.95)
+          ]
+
+        ]
+        [
+          ifelse random 101 < 90
+          [
+            fd 1
+          ]
+          [
+            ifelse random 101 < 50
+            [
+              rt 90
+            ]
+            [
+              lt 90
+            ]
+          ]
+        ]
+      ]
+    ]
+  ]
+
+end
