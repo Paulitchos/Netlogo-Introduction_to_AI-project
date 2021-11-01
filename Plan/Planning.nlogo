@@ -78,9 +78,26 @@ Functions:
 
   ask gluttons [
     ifelse [pcolor] of patch-ahead 1 != red or [pcolor] of patch-ahead 1 != yellow [
-      set pcolor white
+      ; no waste ahead 
       set energy energy - 1 ; gasta uma unidade de energia
       forward 1
     ] [
-      
+      ; waste ahead
+      ; ifelse random 2 [ ; returns 0 or 1
+        ; checks left first
+        ; patch-at 0 1 -> right
+        ; patch-at 0 -1 -> left
+      ifelse [pcolor] of patch-at 0 1 != red or [pcolor] of patch-at 0 1 != yellow [
+        move-forward
+      ]
+
+      ; ] [
+        ; checks right first
+        ifelse [pcolor] of patch-at 0 -1 != red or [pcolor] of patch-at 0 -1 != yellow
+      ; ]
     ]
+
+to move-forward
+  set energy energy - 1 ; gasta uma unidade de energia
+  forward 1
+end

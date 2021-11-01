@@ -108,8 +108,8 @@ end
 
 to move-gluttons
   ask gluttons [
-    if [pcolor] of patch-ahead 1 != red or [pcolor] of patch-ahead 1 != yellow [
-
+    ifelse [pcolor] of patch-ahead 1 != red or [pcolor] of patch-ahead 1 != yellow [
+      set pcolor white
       set energy energy - 1 ; gasta uma unidade de energia
       forward 1
     ]
