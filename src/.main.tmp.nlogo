@@ -155,48 +155,14 @@ to move-cleaners
         ; anda
 
         ; vê lixo normal a toda a volta e anda, se não encontra
-        ifelse [pcolor] of patch-ahead 1 = yellow [
+        ifelse [pcolor] of patch-ahead 1 = blue [
           set energy energy - 1 ; gasta uma unidade de energia
           forward 1
         ] [
-          ifelse [pcolor] of patch-right-and-ahead 90 1 = yellow [
+          ifelse [pcolor] of patch-right-and-ahead 90 1 = blue [
             set energy energy - 1 ; gasta uma unidade de energia
             right 90
           ] [
-            ; vê food a toda a volta e anda e anda, se não enconra
-            ifelse [pcolor] of patch-ahead 1 = green [
-              set energy energy - 1 ; gasta uma unidade de energia
-              forward 1
-            ] [
-              ifelse [pcolor] of patch-right-and-ahead 90 1 = green [
-                set energy energy - 1 ; gasta uma unidade de energia
-                right 90
-              ] [
-                ; anda
-                set energy energy - 1 ; gasta uma unidade de energia
-                forward 1
-              ]
-            ]
-
-          ]
-        ]
-
-
-      ] [
-        ; vê lixo toxio a toda a volta e anda, se não encontra
-        ; vê lixo normal a toda a volta e anda, se não encontra
-        ; vê food a toda a volta e anda e anda, se não enconra
-        ; anda
-
-        ifelse [pcolor] of patch-ahead 1 = red [
-          set energy energy - 1 ; gasta uma unidade de energia
-          forward 1
-        ] [
-          ifelse [pcolor] of patch-right-and-ahead 90 1 = red [
-            set energy energy - 1 ; gasta uma unidade de energia
-            right 90
-          ] [
-            ; vê lixo normal a toda a volta e anda, se não encontra
             ifelse [pcolor] of patch-ahead 1 = yellow [
               set energy energy - 1 ; gasta uma unidade de energia
               forward 1
@@ -224,6 +190,59 @@ to move-cleaners
           ]
         ]
 
+      ] [
+
+        ; vê lixo toxio a toda a volta e anda, se não encontra
+        ; vê lixo normal a toda a volta e anda, se não encontra
+        ; vê food a toda a volta e anda e anda, se não enconra
+        ; anda
+
+        ifelse [pcolor] of patch-ahead 1 = blue [
+          set energy energy - 1 ; gasta uma unidade de energia
+          forward 1
+        ] [
+          ifelse [pcolor] of patch-right-and-ahead 90 1 = blue [
+            set energy energy - 1 ; gasta uma unidade de energia
+            right 90
+          ] [
+            ifelse [pcolor] of patch-ahead 1 = red [
+              set energy energy - 1 ; gasta uma unidade de energia
+              forward 1
+            ] [
+              ifelse [pcolor] of patch-right-and-ahead 90 1 = red [
+                set energy energy - 1 ; gasta uma unidade de energia
+                right 90
+              ] [
+                ; vê lixo normal a toda a volta e anda, se não encontra
+                ifelse [pcolor] of patch-ahead 1 = yellow [
+                  set energy energy - 1 ; gasta uma unidade de energia
+                  forward 1
+                ] [
+                  ifelse [pcolor] of patch-right-and-ahead 90 1 = yellow [
+                    set energy energy - 1 ; gasta uma unidade de energia
+                    right 90
+                  ] [
+                    ; vê food a toda a volta e anda e anda, se não enconra
+                    ifelse [pcolor] of patch-ahead 1 = green [
+                      set energy energy - 1 ; gasta uma unidade de energia
+                      forward 1
+                    ] [
+                      ifelse [pcolor] of patch-right-and-ahead 90 1 = green [
+                        set energy energy - 1 ; gasta uma unidade de energia
+                        right 90
+                      ] [
+                        ; anda
+                        set energy energy - 1 ; gasta uma unidade de energia
+                        forward 1
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+
 
 
       ]
@@ -233,7 +252,7 @@ to move-cleaners
       ; desvia-se dos lixos
       ; anda
 
-      ; vê lixo normal a toda a volta e anda, se não encontra
+      ; vê depositos a toda a volta e anda, se não encontra
       ifelse [pcolor] of patch-ahead 1 = blue [
         set energy energy - 1 ; gasta uma unidade de energia
         forward 1
@@ -242,7 +261,7 @@ to move-cleaners
           set energy energy - 1 ; gasta uma unidade de energia
           right 90
         ] [
-          ; vê food a toda a volta e anda e anda, se não enconra
+      ; vê food a toda a volta e anda e anda, se não enconra
           ifelse [pcolor] of patch-ahead 1 = green [
             set energy energy - 1 ; gasta uma unidade de energia
             forward 1
@@ -542,7 +561,7 @@ INPUTBOX
 100
 424
 num_gluttons
-50.0
+30.0
 1
 0
 Number
@@ -553,7 +572,7 @@ INPUTBOX
 199
 424
 num_cleaners
-50.0
+30.0
 1
 0
 Number
@@ -647,22 +666,11 @@ PENS
 "num_gluttons" 1.0 0 -13840069 true "" "plot count gluttons"
 "num_cleaners" 1.0 0 -14454117 true "" "plot count cleaners"
 
-INPUTBOX
-116
-434
-198
-494
-tick
-5.0
-1
-0
-Number
-
 SWITCH
-217
-434
-367
-467
+129
+432
+279
+465
 show_energy
 show_energy
 0
@@ -670,13 +678,13 @@ show_energy
 -1000
 
 SWITCH
-218
-474
-367
-507
+130
+472
+279
+505
 show_waste
 show_waste
-1
+0
 1
 -1000
 
