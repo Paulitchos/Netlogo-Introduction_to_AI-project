@@ -159,7 +159,7 @@ to move-cleaners
         ; anda
 
         ; vê lixo normal a toda a volta e anda, se não encontra
-        ifelse [pcolor] of patch-ahead 1 = blue [
+        ifelse [pcolor] of patch-ahead 1 = blue and waste > 1 [
           set energy energy - round((1 + waste) / 2) ; gasta uma unidade de energia
           forward 1
         ] [
@@ -526,13 +526,56 @@ end
 
 to reproduce
   ask gluttons [
-    if energy > food_energy_amount [ ; Se atinge limiar de energia, reproduz c/ prob
-      if random 101 < reproduction_chance [ ; Ver probabilidade
-        set energy round(energy / 2) ; Divide energia / 2 e arredonda
-        hatch 1 [jump 5]
-        ; Reproduz-se, filho aparece à frente
+    if reproduce_gluttons [
+      if energy > food_energy_amount [ ; Se atinge limiar de energia, reproduz c/ prob
+        if random 101 < reproduction_chance [ ; Ver probabilidade
+          set energy round(energy / 2) ; Divide energia / 2 e arredonda
+          hatch 1 [jump 5]
+          ; Reproduz-se, filho aparece à frente
+        ]
       ]
     ]
+  ]
+  ask cleaners [
+    if reproduce_cleaners [
+      if energy > food_energy_amount [ ; Se atinge limiar de energia, reproduz c/ prob
+        if random 101 < reproduction_chance [ ; Ver probabilidade
+          set energy round(energy / 2) ; Divide energia / 2 e arredonda
+          hatch 1 [jump 5]
+          ; Reproduz-se, filho aparece à frente
+        ]
+      ]
+    ]
+  ]
+end
+
+to spawn_gluttons
+  create-gluttons 5 [
+    set shape "turtle"
+    set color brown
+    ; colocação junta-se aos caracóis (abaixo)
+    set heading 0      ; turtle is now facing north
+    set size 2
+    setxy random-xcor random-ycor
+    while [pcolor = red or pcolor = yellow or pcolor = green] [
+      setxy random-xcor random-ycor
+    ]
+    set energy starting_energy ; energy inicial
+  ]
+end
+
+to spawn_cleaners
+  create-cleaners 5 [
+    set shape "truck"
+    set color white
+    set waste 0
+    set heading 0      ; turtle is now facing north
+    set size 2
+    setxy random-xcor random-ycor
+    while [pcolor = red or pcolor = yellow or pcolor = green] [
+      setxy random-xcor random-ycor
+    ]
+    set energy starting_energy ; energy inicial
   ]
 end
 
@@ -617,25 +660,25 @@ NIL
 1
 
 SLIDER
-394
-535
-550
-568
+392
+527
+548
+560
 food_energy_amount
 food_energy_amount
 1
 50
-27.0
+26.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-588
-537
-744
-570
+587
+527
+743
+560
 starting_toxic_waste
 starting_toxic_waste
 0
@@ -647,10 +690,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-395
-587
-551
-620
+392
+572
+548
+605
 starting_food
 starting_food
 5
@@ -662,10 +705,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-589
-590
-745
-623
+587
+573
+743
+606
 n_deposits
 n_deposits
 1
@@ -677,10 +720,10 @@ NIL
 HORIZONTAL
 
 INPUTBOX
-23
-364
-100
-424
+117
+349
+194
+409
 num_gluttons
 30.0
 1
@@ -688,10 +731,10 @@ num_gluttons
 Number
 
 INPUTBOX
-116
-364
-199
-424
+204
+350
+287
+410
 num_cleaners
 50.0
 1
@@ -699,10 +742,10 @@ num_cleaners
 Number
 
 INPUTBOX
-216
-365
 302
-425
+351
+388
+411
 starting_energy
 100.0
 1
@@ -710,10 +753,10 @@ starting_energy
 Number
 
 INPUTBOX
-23
-433
-101
-493
+20
+349
+98
+409
 max_waste
 5.0
 1
@@ -721,10 +764,10 @@ max_waste
 Number
 
 MONITOR
-22
-516
-103
-561
+68
+501
+149
+546
 Toxic Waste
 count patches with [pcolor = red]
 17
@@ -732,10 +775,10 @@ count patches with [pcolor = red]
 11
 
 MONITOR
-116
-516
-206
-561
+162
+501
+252
+546
 Normal Waste
 count patches with [pcolor = yellow]
 17
@@ -743,10 +786,10 @@ count patches with [pcolor = yellow]
 11
 
 MONITOR
-219
-516
-306
-561
+265
+501
+352
+546
 Food
 count patches with [pcolor = green]
 17
@@ -754,10 +797,10 @@ count patches with [pcolor = green]
 11
 
 SLIDER
-779
-538
-935
-571
+778
+528
+934
+561
 starting_normal_waste
 starting_normal_waste
 0
@@ -788,10 +831,10 @@ PENS
 "num_cleaners" 1.0 0 -14454117 true "" "plot count cleaners"
 
 SWITCH
-129
-432
-279
-465
+52
+422
+202
+455
 show_energy
 show_energy
 0
@@ -799,10 +842,10 @@ show_energy
 -1000
 
 SWITCH
-130
-472
-279
-505
+53
+462
+202
+495
 show_waste
 show_waste
 1
@@ -810,10 +853,10 @@ show_waste
 -1000
 
 SLIDER
-778
-591
-934
-624
+776
+574
+932
+607
 reproduction_chance
 reproduction_chance
 0
@@ -823,6 +866,62 @@ reproduction_chance
 1
 NIL
 HORIZONTAL
+
+BUTTON
+211
+422
+367
+455
+spawns 5 glutton
+spawn_gluttons
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+209
+462
+366
+495
+spawns 5 cleaner
+spawn_cleaners
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SWITCH
+11
+550
+185
+583
+reproduce_gluttons
+reproduce_gluttons
+0
+1
+-1000
+
+SWITCH
+200
+551
+376
+584
+reproduce_cleaners
+reproduce_cleaners
+1
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
