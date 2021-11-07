@@ -132,10 +132,12 @@ to move-cleaners
     ; PSEUDOCODIGO
     ; if waste != full
     ; if waste = full - 1
+    ; vê depositos a toda a volta e anda, se não encontra
     ; vê lixo normal a toda a volta e anda, se não encontra
     ; vê food a toda a volta e anda e anda, se não enconra
     ; anda
     ; else
+    ; vê depositos a toda a volta e anda, se não encontra
     ; vê lixo toxio a toda a volta e anda, se não encontra
     ; vê lixo normal a toda a volta e anda, se não encontra
     ; vê food a toda a volta e anda e anda, se não enconra
@@ -150,19 +152,12 @@ to move-cleaners
     ifelse waste != max_waste [
 
       ifelse waste = max_waste - 1[
+        ; vê depositos a toda a volta e anda, se não encontra
         ; vê lixo normal a toda a volta e anda, se não encontra
         ; vê food a toda a volta e anda e anda, se não enconra
         ; anda
 
         ; vê lixo normal a toda a volta e anda, se não encontra
-        ifelse [pcolor] of patch-ahead 1 = blue [
-          set energy energy - 1 ; gasta uma unidade de energia
-          forward 1
-        ] [
-          ifelse [pcolor] of patch-right-and-ahead 90 1 = blue [
-            set energy energy - 1 ; gasta uma unidade de energia
-            right 90
-          ] [
             ifelse [pcolor] of patch-ahead 1 = yellow [
               set energy energy - 1 ; gasta uma unidade de energia
               forward 1
@@ -187,24 +182,14 @@ to move-cleaners
                 ]
               ]
             ]
-          ]
-        ]
 
       ] [
-
+        ; vê depositos a toda a volta e anda, se não encontra
         ; vê lixo toxio a toda a volta e anda, se não encontra
         ; vê lixo normal a toda a volta e anda, se não encontra
         ; vê food a toda a volta e anda e anda, se não enconra
         ; anda
 
-        ifelse [pcolor] of patch-ahead 1 = blue [
-          set energy energy - 1 ; gasta uma unidade de energia
-          forward 1
-        ] [
-          ifelse [pcolor] of patch-right-and-ahead 90 1 = blue [
-            set energy energy - 1 ; gasta uma unidade de energia
-            right 90
-          ] [
             ifelse [pcolor] of patch-ahead 1 = red [
               set energy energy - 1 ; gasta uma unidade de energia
               forward 1
@@ -240,9 +225,6 @@ to move-cleaners
                 ]
               ]
             ]
-          ]
-        ]
-
 
 
       ]
@@ -594,7 +576,7 @@ INPUTBOX
 101
 493
 max_waste
-5.0
+50.0
 1
 0
 Number
