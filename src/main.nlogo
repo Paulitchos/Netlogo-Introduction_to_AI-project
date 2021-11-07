@@ -158,14 +158,6 @@ to move-cleaners
         ; anda
 
         ; vê lixo normal a toda a volta e anda, se não encontra
-        ifelse [pcolor] of patch-ahead 1 = blue [
-          set energy energy - 1 ; gasta uma unidade de energia
-          forward 1
-        ] [
-          ifelse [pcolor] of patch-right-and-ahead 90 1 = blue [
-            set energy energy - 1 ; gasta uma unidade de energia
-            right 90
-          ] [
             ifelse [pcolor] of patch-ahead 1 = yellow [
               set energy energy - 1 ; gasta uma unidade de energia
               forward 1
@@ -190,8 +182,6 @@ to move-cleaners
                 ]
               ]
             ]
-          ]
-        ]
 
       ] [
         ; vê depositos a toda a volta e anda, se não encontra
@@ -200,14 +190,6 @@ to move-cleaners
         ; vê food a toda a volta e anda e anda, se não enconra
         ; anda
 
-        ifelse [pcolor] of patch-ahead 1 = blue [
-          set energy energy - 1 ; gasta uma unidade de energia
-          forward 1
-        ] [
-          ifelse [pcolor] of patch-right-and-ahead 90 1 = blue [
-            set energy energy - 1 ; gasta uma unidade de energia
-            right 90
-          ] [
             ifelse [pcolor] of patch-ahead 1 = red [
               set energy energy - 1 ; gasta uma unidade de energia
               forward 1
@@ -243,9 +225,6 @@ to move-cleaners
                 ]
               ]
             ]
-          ]
-        ]
-
 
 
       ]
@@ -537,7 +516,7 @@ starting_food
 starting_food
 5
 20
-10.0
+20.0
 1
 1
 NIL
@@ -644,7 +623,7 @@ starting_normal_waste
 starting_normal_waste
 0
 15
-10.0
+13.0
 1
 1
 NIL
@@ -1023,6 +1002,51 @@ NetLogo 6.2.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="experiment" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="10000"/>
+    <metric>count gluttons</metric>
+    <metric>count cleaners</metric>
+    <enumeratedValueSet variable="starting_food">
+      <value value="20"/>
+      <value value="15"/>
+      <value value="10"/>
+      <value value="5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="show_energy">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="starting_normal_waste">
+      <value value="13"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="max_waste">
+      <value value="5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="show_waste">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="food_energy_amount">
+      <value value="40"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="starting_toxic_waste">
+      <value value="13"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="n_deposits">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num_cleaners">
+      <value value="30"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num_gluttons">
+      <value value="30"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="starting_energy">
+      <value value="100"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
