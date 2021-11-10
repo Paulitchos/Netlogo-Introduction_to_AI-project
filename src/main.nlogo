@@ -94,7 +94,7 @@ to go
   ]
   display-labels
   tick
-  if ticks >= 10000 [stop]
+  if ticks >= ticks_end and infinite_ticks != true [stop]
 end
 
 to move-cleaners
@@ -722,9 +722,9 @@ HORIZONTAL
 
 INPUTBOX
 117
-349
+330
 194
-409
+390
 num_gluttons
 30.0
 1
@@ -733,9 +733,9 @@ Number
 
 INPUTBOX
 204
-350
+331
 287
-410
+391
 num_cleaners
 50.0
 1
@@ -744,9 +744,9 @@ Number
 
 INPUTBOX
 302
-351
+332
 388
-411
+392
 starting_energy
 100.0
 1
@@ -755,9 +755,9 @@ Number
 
 INPUTBOX
 20
-349
+330
 98
-409
+390
 max_waste
 5.0
 1
@@ -765,10 +765,10 @@ max_waste
 Number
 
 MONITOR
-68
-501
-149
-546
+65
+477
+146
+522
 Toxic Waste
 count patches with [pcolor = red]
 17
@@ -776,10 +776,10 @@ count patches with [pcolor = red]
 11
 
 MONITOR
-162
-501
-252
-546
+159
+477
+249
+522
 Normal Waste
 count patches with [pcolor = yellow]
 17
@@ -787,10 +787,10 @@ count patches with [pcolor = yellow]
 11
 
 MONITOR
-265
-501
-352
-546
+262
+477
+349
+522
 Food
 count patches with [pcolor = green]
 17
@@ -814,9 +814,9 @@ HORIZONTAL
 
 PLOT
 0
-59
+48
 387
-338
+327
 Agents
 Interactions
 Number of Agents
@@ -832,10 +832,10 @@ PENS
 "num_cleaners" 1.0 0 -14454117 true "" "plot count cleaners"
 
 SWITCH
-52
-422
-202
-455
+49
+398
+199
+431
 show_energy
 show_energy
 0
@@ -843,10 +843,10 @@ show_energy
 -1000
 
 SWITCH
-53
-462
-202
-495
+50
+438
+199
+471
 show_waste
 show_waste
 1
@@ -869,10 +869,10 @@ NIL
 HORIZONTAL
 
 BUTTON
-211
-422
-367
-455
+208
+398
+364
+431
 spawns 5 glutton
 spawn_gluttons
 NIL
@@ -886,10 +886,10 @@ NIL
 1
 
 BUTTON
-209
-462
-366
-495
+206
+438
+363
+471
 spawns 5 cleaner
 spawn_cleaners
 NIL
@@ -903,10 +903,10 @@ NIL
 1
 
 SWITCH
-11
-550
-185
-583
+12
+526
+186
+559
 reproduce_gluttons
 reproduce_gluttons
 0
@@ -915,11 +915,33 @@ reproduce_gluttons
 
 SWITCH
 200
-551
+526
 376
-584
+559
 reproduce_cleaners
 reproduce_cleaners
+1
+1
+-1000
+
+INPUTBOX
+69
+567
+192
+627
+ticks_end
+100.0
+1
+0
+Number
+
+SWITCH
+202
+581
+326
+614
+infinite_ticks
+infinite_ticks
 1
 1
 -1000
