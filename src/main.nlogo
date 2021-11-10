@@ -94,6 +94,7 @@ to go
   ]
   display-labels
   tick
+  if ticks >= 10000 [stop]
 end
 
 to move-cleaners
